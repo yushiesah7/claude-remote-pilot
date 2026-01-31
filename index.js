@@ -81,6 +81,15 @@ client.once('ready', () => {
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
+  // アクセス制御（推奨）: 指定がある場合は許可ユーザーのみ実行
+  const allowedUserIds = (process.env.ALLOWED_USER_IDS || '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+  if (allowedUserIds.length > 0 && !allowedUserIds.includes(message.author.id)) {
+    return;
+  }
+
   const isMentioned = message.mentions.has(client.user);
   const startsWithClaude = message.content.toLowerCase().startsWith('claude');
 
