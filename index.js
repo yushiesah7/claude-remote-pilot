@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -48,7 +48,15 @@ function clearSession(channelId) {
 }
 
 // プロジェクトの親ディレクトリ
-const PROJECTS_ROOT = '/Users/yushi/Private';
+const PROJECTS_ROOT = process.env.PROJECTS_ROOT || process.cwd();
+
+function getClaudeBin() {
+  return process.env.CLAUDE_BIN || 'claude';
+}
+
+function getClaudeHome() {
+  return process.env.CLAUDE_HOME || process.env.HOME;
+}
 
 function getRepo(channelId) {
   return loadData().repos[channelId] || PROJECTS_ROOT;
@@ -292,23 +300,24 @@ client.on('messageCreate', async (message) => {
 // Claude Code を実行する関数
 function runClaudeCode(prompt, existingSessionId, channelId, cwd) {
   return new Promise((resolve, reject) => {
-    const escapedPrompt = prompt.replace(/'/g, "'\\''");
-
-    let resumeFlag = '';
+    const claudeBin = getClaudeBin();
+    const args = ['-p', prompt, '--output-format', 'json'];
     if (existingSessionId) {
-      resumeFlag = `--resume '${existingSessionId}'`;
+      args.push('--resume', existingSessionId);
     }
 
-    const command = `export HOME=/Users/yushi && /Users/yushi/.nvm/versions/node/v22.12.0/bin/claude -p '${escapedPrompt}' ${resumeFlag} --output-format json < /dev/null`;
-
-    console.log('実行コマンド:', command);
+    console.log('Claude 実行:', claudeBin, args.slice(0, 6).join(' ') + (args.length > 6 ? ' ...' : ''));
     console.log('作業ディレクトリ:', cwd);
 
-    exec(command, {
+    execFile(claudeBin, args, {
       timeout: 30 * 60 * 1000, // 30分タイムアウト
       maxBuffer: 50 * 1024 * 1024,
-      shell: '/bin/bash',
-      cwd: cwd
+      cwd: cwd,
+      env: {
+        ...process.env,
+        ...(getClaudeHome() ? { HOME: getClaudeHome() } : {}),
+      },
+      windowsHide: true,
     }, (error, stdout, stderr) => {
       console.log('stdout:', (stdout || '').slice(0, 500));
       if (stderr) console.log('stderr:', stderr.slice(0, 200));

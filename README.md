@@ -45,7 +45,7 @@ graph TD
 ```
 
 | 設定項目 | 値 |
-|---------|-----|
+| --------- | ----- |
 | PUBLIC BOT | OFF（自分専用なら） |
 | MESSAGE CONTENT INTENT | **ON（必須）** |
 
@@ -109,14 +109,14 @@ ALLOWED_USER_IDS=あなたのユーザーID
 
 #### 2-3. パスの設定（必要に応じて）
 
-`index.js` 内の以下を環境に合わせて変更:
+`PROJECTS_ROOT` と `CLAUDE_BIN` は環境に合わせて設定してください（おすすめ: `.env` に設定）。
 
 ```javascript
 // プロジェクトの親ディレクトリ
-const PROJECTS_ROOT = '/Users/yushi/Private';
+const PROJECTS_ROOT = process.env.PROJECTS_ROOT || process.cwd();
 
-// Claude CLI のパス（which claude で確認）
-const command = `export HOME=/Users/yushi && /Users/yushi/.nvm/versions/node/v22.12.0/bin/claude ...`;
+// Claude CLI のパス（`which claude` で確認）
+const claudeBin = process.env.CLAUDE_BIN || 'claude';
 ```
 
 ---
@@ -128,7 +128,7 @@ node index.js
 ```
 
 起動成功時:
-```
+```text
 ボット起動完了: Claude Pilot#1234
 ```
 
@@ -146,7 +146,7 @@ node index.js
 ### コマンド一覧
 
 | コマンド | 説明 |
-|---------|------|
+| --------- | ------ |
 | `repolist` / `一覧` | 利用可能なリポジトリを表示 |
 | `repo 名前` / `repo 番号` | 作業ディレクトリを設定 |
 | `reset` / `リセット` | セッションをリセット |
