@@ -203,6 +203,7 @@ graph LR
 「運用に合わせてどんなガードレール/機能追加をすると良いか」を Before / After 付きでまとめています。
 
 - `docs/IMPROVEMENTS.md`
+- `docs/mermaid記法のルール.md`
 
 例: `repo` のパス制限、セッションのユーザー分離、同時実行制御（`cancel`）、スラッシュコマンド化、Codex等のRunner拡張。
 
