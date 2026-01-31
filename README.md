@@ -198,6 +198,16 @@ graph LR
 
 ---
 
+## 改善案（ロードマップ）
+
+「運用に合わせてどんなガードレール/機能追加をすると良いか」を Before / After 付きでまとめています。
+
+- `docs/IMPROVEMENTS.md`
+
+例: `repo` のパス制限、セッションのユーザー分離、同時実行制御（`cancel`）、スラッシュコマンド化、Codex等のRunner拡張。
+
+---
+
 ## トラブルシューティング
 
 ### Bot が反応しない
@@ -208,7 +218,8 @@ graph LR
 
 ### Claude Code がエラー
 
-- `which claude` でパスを確認して `index.js` を修正
+- `which claude` でパスを確認して `.env` の `CLAUDE_BIN` を設定
+- `PROJECTS_ROOT` が意図したディレクトリになっているか確認
 - Claude Code が正しくインストールされているか確認
 
 ---
