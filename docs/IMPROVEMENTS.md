@@ -89,7 +89,7 @@ sequenceDiagram
 stateDiagram-v2
     [*] --> Idle
     Idle --> Running: run requested
-    Running --> Running: queued (optional)
+    Running --> Running: queued optional
     Running --> Idle: completed
     Running --> Idle: cancel
 ```
@@ -111,7 +111,7 @@ stateDiagram-v2
 flowchart LR
     A[Discord Message] --> B[Prompt Parser]
     B -->|metadata only| C[Log]
-    B -->|prompt (masked)| C
+    B -->|prompt masked| C
 ```
 
 ---
@@ -164,7 +164,7 @@ sequenceDiagram
     U->>D: /run prompt="..."
     D->>B: interaction payload
     B-->>D: deferred response
-    B-->>D: follow-up (result)
+    B-->>D: follow-up result
 ```
 
 ---
@@ -183,7 +183,7 @@ sequenceDiagram
 ```mermaid
 flowchart LR
     A[update state] --> B[write temp file]
-    B --> C[fsync (optional)]
+    B --> C[fsync optional]
     C --> D[atomic rename]
     D --> E[done]
 ```
@@ -204,8 +204,8 @@ flowchart LR
 ```mermaid
 graph LR
     A[Discord] --> B[Bot]
-    B --> C[Runner Service<br/>(container/VM)]
-    C --> D[Repo (mounted read/write as needed)]
+    B --> C[Runner Service: container/VM]
+    C --> D[Repo: mounted read/write as needed]
 ```
 
 ---
