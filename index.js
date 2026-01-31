@@ -154,11 +154,13 @@ client.on('messageCreate', async (message) => {
   if (prompt === 'session' || prompt === 'セッション' || prompt === '状態') {
     const sessionId = getSessionId(message.channel.id);
     const repo = getRepo(message.channel.id);
-    await message.reply(
-      `**現在の設定**\n` +
+    let replyText = `**現在の設定**\n` +
       `セッションID: \`${sessionId || 'なし（新規）'}\`\n` +
-      `作業ディレクトリ: \`${repo}\``
-    );
+      `作業ディレクトリ: \`${repo}\``;
+    if (sessionId) {
+      replyText += `\n💡 ローカルで参加: \`claude -r ${sessionId}\``;
+    }
+    await message.reply(replyText);
     return;
   }
 
@@ -190,6 +192,11 @@ client.on('messageCreate', async (message) => {
     `📥 **受け付けました**\n` +
     `セッション: \`${existingSessionId || '新規'}\`\n` +
     `作業ディレクトリ: \`${repo}\``;
+
+  // 既存セッションがある場合はローカル参加方法を表示
+  if (existingSessionId) {
+    statusContent += `\n💡 ローカルで参加: \`claude -r ${existingSessionId}\``;
+  }
 
   // 新規セッションの場合はコマンド一覧を追加
   if (isNewSession) {
@@ -251,11 +258,14 @@ client.on('messageCreate', async (message) => {
     const newSessionId = getSessionId(message.channel.id);
 
     // 結果を送信
-    const finalMessage = `✅ **完了しました**\nセッション: \`${newSessionId}\`\n\n${result}`;
+    const sessionInfo = newSessionId
+      ? `セッション: \`${newSessionId}\`\n💡 ローカルで参加: \`claude -r ${newSessionId}\``
+      : '';
+    const finalMessage = `✅ **完了しました**\n${sessionInfo}\n\n${result}`;
 
     if (finalMessage.length > 1900) {
       const chunks = splitMessage(result, 1800);
-      await message.channel.send(`✅ **完了しました**\nセッション: \`${newSessionId}\``);
+      await message.channel.send(`✅ **完了しました**\n${sessionInfo}`);
       for (const chunk of chunks) {
         await message.channel.send(chunk);
       }
